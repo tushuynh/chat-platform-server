@@ -5,6 +5,9 @@
   "author": "tushuynh",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": ">= 20"
+  },
   "scripts": {
     "build": "nest build",
     "start": "nest start",
@@ -17,6 +20,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "reflect-metadata": "^0.2.0",
