@@ -16,8 +16,7 @@ async function bootstrap() {
   app.enableCors({ origin: allowOrigin, credentials: true });
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(port, 'localhost');
-
+  await app.listen(port);
   logger.log(`Server running on http://localhost:${port}${globalPrefix}`);
 }
 bootstrap();
