@@ -1,7 +1,8 @@
+import { Peer, User } from '@common/database/entities';
 import { CreateUserDto } from '@modules/auth/dtos/CreateUser.dto';
-import { Peer, User } from '@modules/database/entities';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FindUserOptions, FindUserParams } from '@shared/types';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -20,7 +21,22 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async findByUserName(username: string) {
-    return this.userRepository.findOneBy({ username });
+  async findUser(
+    params: FindUserParams,
+    options?: FindUserOptions
+  ): Promise<User> {
+    const selections: (keyof User)[] = [
+      'email',
+      'username',
+      'firstName',
+      'lastName',
+      'id',
+    ];
+    const selectionsWithPassword: (keyof User)[] = [...selections, 'password'];
+    return this.userRepository.findOne({
+      where: params,
+      select: options?.selectAll ? selectionsWithPassword : selections,
+      relations: ['profile', 'presence', 'peer'],
+    });
   }
 }
