@@ -3,3 +3,8 @@ export enum APP_ENVIRONMENT {
   STAGING = 'staging',
   PRODUCTION = 'production',
 }
+
+export enum Routes {
+  AUTH = 'auth',
+  USER = 'users',
+}

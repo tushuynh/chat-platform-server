@@ -1,3 +1,4 @@
+import { DatabaseModule } from '@modules/database/database.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import configs from 'src/configs';
@@ -13,6 +14,7 @@ if (process.env.APP_ENVIRONMENT === 'production')
       load: configs,
       envFilePath,
     }),
+    DatabaseModule,
   ],
 })
 export class CommonModule {}
