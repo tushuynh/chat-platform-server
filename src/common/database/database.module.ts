@@ -1,7 +1,7 @@
+import entities from '@common/database/entities';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import entities from '@modules/database/entities';
 
 @Module({
   imports: [
