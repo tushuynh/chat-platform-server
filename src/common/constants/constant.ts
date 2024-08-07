@@ -6,5 +6,12 @@ export enum APP_ENVIRONMENT {
 
 export enum Routes {
   AUTH = 'auth',
-  USER = 'users',
+  USERS = 'users',
+  CONVERSATIONS = 'conversations',
+  FRIENDS = 'friends',
+  FRIEND_REQUESTS = 'friends/requests',
+}
+
+export enum ServerEvents {
+  FRIEND_REQUEST_ACCEPTED = 'friendrequest.accepted',
 }

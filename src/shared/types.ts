@@ -1,3 +1,6 @@
+import { User } from '@common/database/entities';
+import { Request } from 'express';
+
 export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
 
 export type UserCredential = {
@@ -14,3 +17,12 @@ export type FindUserParams = Partial<{
 export type FindUserOptions = Partial<{
   selectAll: boolean;
 }>;
+
+export interface AuthenticatedRequest extends Request {
+  user: User;
+}
+
+export type CreateFriendParams = {
+  user: User;
+  username: string;
+};

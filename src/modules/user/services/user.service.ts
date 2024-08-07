@@ -39,4 +39,20 @@ export class UserService {
       relations: ['profile', 'presence', 'peer'],
     });
   }
+
+  searchUsers(username: string) {
+    const statement = '(user.username LIKE :username)';
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where(statement, { username: `%${username}%` })
+      .limit(10)
+      .select([
+        'user.username',
+        'user.firstName',
+        'user.lastName',
+        'user.id',
+        'user.profile',
+      ])
+      .getMany();
+  }
 }
