@@ -24,7 +24,7 @@ export class FriendService {
     });
   }
 
-  isFriends(userOneId: number, userTwoId: number) {
+  isFriend(userOneId: number, userTwoId: number) {
     return this.friendRepository.findOne({
       where: [
         {

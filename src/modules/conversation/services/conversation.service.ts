@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateConversationDto } from '../dtos/CreateConversation.dto';
 import { UserService } from '@modules/user/services/user.service';
-import { CreateConversationException } from '../exceptions/CreateConversation.exception';
+import { CreateConversationException } from '../exceptions/createConversation.exception';
 import { FriendService } from '@modules/friend/services/friend.service';
 import { FriendNotFoundException } from '@modules/friend/exceptions/friendNotFound.exception';
 import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exception';
@@ -36,6 +36,19 @@ export class ConversationService {
       .getMany();
   }
 
+  async findById(id: number) {
+    return this.conversationRepository.findOne({
+      where: { id },
+      relations: [
+        'creator',
+        'recipient',
+        'creator.profile',
+        'recipient.profile',
+        'lastMessageSent',
+      ],
+    });
+  }
+
   async isCreated(userId: number, recipientId: number) {
     return this.conversationRepository.findOne({
       where: [
@@ -64,11 +77,11 @@ export class ConversationService {
       );
     }
 
-    const isFriends = await this.friendService.isFriends(
+    const isFriend = await this.friendService.isFriend(
       creator.id,
       recipient.id
     );
-    if (!isFriends) {
+    if (!isFriend) {
       throw new FriendNotFoundException();
     }
 
@@ -94,5 +107,9 @@ export class ConversationService {
     await this.messageRepository.save(newMessage);
 
     return conversation;
+  }
+
+  save(conversation: Conversation): Promise<Conversation> {
+    return this.conversationRepository.save(conversation);
   }
 }

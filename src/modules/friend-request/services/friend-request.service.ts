@@ -50,11 +50,8 @@ export class FriendRequestService {
       throw new FriendRequestException('Cannot add yourself');
     }
 
-    const isFriends = await this.friendService.isFriends(
-      sender.id,
-      receiver.id
-    );
-    if (isFriends) {
+    const isFriend = await this.friendService.isFriend(sender.id, receiver.id);
+    if (isFriend) {
       throw new HttpException('Friend already exists', HttpStatus.CONFLICT);
     }
 

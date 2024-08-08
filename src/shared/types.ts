@@ -1,4 +1,4 @@
-import { User } from '@common/database/entities';
+import { MessageAttachment, User } from '@common/database/entities';
 import { Request } from 'express';
 
 export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
@@ -30,4 +30,18 @@ export type CreateFriendParams = {
 export type FriendRequestParams = {
   id: number;
   userId: number;
+};
+
+export interface Attachment extends Express.Multer.File {}
+
+export type CreateMessageParams = {
+  id: number;
+  content?: string;
+  attachments?: Attachment[];
+  user: User;
+};
+
+export type UploadMessageAttachmentParams = {
+  file: Attachment;
+  messageAttachment: MessageAttachment;
 };

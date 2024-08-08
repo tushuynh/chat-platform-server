@@ -8,10 +8,15 @@ export enum Routes {
   AUTH = 'auth',
   USERS = 'users',
   CONVERSATIONS = 'conversations',
+  MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
   FRIEND_REQUESTS = 'friends/requests',
 }
 
 export enum ServerEvents {
   FRIEND_REQUEST_ACCEPTED = 'friendrequest.accepted',
+}
+
+export enum Services {
+  AWS_S3 = 'AWS_S3',
 }
