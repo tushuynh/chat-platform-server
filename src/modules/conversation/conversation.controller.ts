@@ -10,7 +10,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class ConversationController {
   constructor(
     private readonly conversationService: ConversationService,
-    private readonly events: EventEmitter2
+    private readonly event: EventEmitter2
   ) {}
 
   @Get()
@@ -27,7 +27,7 @@ export class ConversationController {
       user,
       createConversationDto
     );
-    this.events.emit('conversation.create', conversation);
+    this.event.emit('conversation.create', conversation);
 
     return conversation;
   }

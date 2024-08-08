@@ -8,8 +8,8 @@ export default registerAs(
       allowOrigin: process.env.ALLOW_ORIGIN ?? '*',
     },
     throttle: {
-      ttl: 60 * 1000, // 1 min
-      limit: 300, // max request per ttl
+      ttl: 10 * 1000, // 10 seconds
+      limit: 10, // max request per ttl
     },
   })
 );

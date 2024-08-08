@@ -26,3 +26,8 @@ export type CreateFriendParams = {
   user: User;
   username: string;
 };
+
+export type FriendRequestParams = {
+  id: number;
+  userId: number;
+};

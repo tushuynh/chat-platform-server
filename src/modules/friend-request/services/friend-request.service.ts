@@ -1,18 +1,22 @@
-import { FriendRequest } from '@common/database/entities';
+import { Friend, FriendRequest } from '@common/database/entities';
 import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exception';
 import { UserService } from '@modules/user/services/user.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateFriendParams } from '@shared/types';
+import { CreateFriendParams, FriendRequestParams } from '@shared/types';
 import { Repository } from 'typeorm';
 import { FriendRequestException } from '../exceptions/friendRequest.exception';
 import { FriendService } from '@modules/friend/services/friend.service';
+import { FriendRequestNotFound } from '../exceptions/friendRequestNotFound.exception';
+import { FriendRequestAcceptedException } from '../exceptions/friendRequestAccepted.exception';
 
 @Injectable()
 export class FriendRequestService {
   constructor(
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
+    @InjectRepository(Friend)
+    private readonly friendRepository: Repository<Friend>,
     private readonly userService: UserService,
     private readonly friendService: FriendService
   ) {}
@@ -62,6 +66,34 @@ export class FriendRequestService {
     return this.friendRequestRepository.save(friend);
   }
 
+  async accept({ id, userId }: FriendRequestParams) {
+    const friendRequest = await this.findById(id);
+    if (!friendRequest) {
+      throw new FriendRequestNotFound();
+    }
+
+    if (friendRequest.status === 'accepted') {
+      throw new FriendRequestAcceptedException();
+    }
+
+    if (friendRequest.receiver.id !== userId) {
+      throw new FriendRequestException();
+    }
+
+    friendRequest.status = 'accepted';
+    const updatedFriendRequest =
+      await this.friendRequestRepository.save(friendRequest);
+    const newFriend = this.friendRepository.create({
+      sender: friendRequest.sender,
+      receiver: friendRequest.receiver,
+    });
+    const friend = await this.friendRepository.save(newFriend);
+    return {
+      friend,
+      friendRequest: updatedFriendRequest,
+    };
+  }
+
   isPending(userOneId: number, userTwoId: number) {
     return this.friendRequestRepository.findOne({
       where: [
@@ -76,6 +108,13 @@ export class FriendRequestService {
           status: 'pending',
         },
       ],
+    });
+  }
+
+  findById(id: number): Promise<FriendRequest> {
+    return this.friendRequestRepository.findOne({
+      where: { id },
+      relations: ['receiver', 'sender'],
     });
   }
 }
