@@ -55,4 +55,8 @@ export class UserService {
       ])
       .getMany();
   }
+
+  async saveUser(user: User) {
+    return this.userRepository.save(user);
+  }
 }

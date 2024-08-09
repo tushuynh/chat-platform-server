@@ -50,3 +50,8 @@ export type AccessParams = {
   id: number;
   userId: number;
 };
+
+export type UpdateStatusMessageParams = {
+  user: User;
+  statusMessage: string;
+};

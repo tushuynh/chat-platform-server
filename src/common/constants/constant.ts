@@ -7,6 +7,7 @@ export enum APP_ENVIRONMENT {
 export enum Routes {
   AUTH = 'auth',
   USERS = 'users',
+  USERS_PRESENCE = 'users/presence',
   CONVERSATIONS = 'conversations',
   MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
