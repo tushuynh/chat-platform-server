@@ -15,6 +15,7 @@ const awsS3Provider = {
       },
       endpoint: configService.get<string>('storage.endpoint'),
       region: configService.get<string>('storage.region'),
+      forcePathStyle: true,
     }),
 };
 
