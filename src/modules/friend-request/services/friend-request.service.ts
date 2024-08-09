@@ -109,6 +109,24 @@ export class FriendRequestService {
     return friendRequest;
   }
 
+  async reject({ id, userId }: CancelFriendRequestParams) {
+    const friendRequest = await this.findById(id);
+    if (!friendRequest) {
+      throw new FriendRequestNotFoundException();
+    }
+
+    if (friendRequest.status === 'accepted') {
+      throw new FriendRequestAcceptedException();
+    }
+
+    if (friendRequest.receiver.id !== userId) {
+      throw new FriendRequestException();
+    }
+
+    friendRequest.status = 'rejected';
+    return this.friendRequestRepository.save(friendRequest);
+  }
+
   isPending(userOneId: number, userTwoId: number) {
     return this.friendRequestRepository.findOne({
       where: [

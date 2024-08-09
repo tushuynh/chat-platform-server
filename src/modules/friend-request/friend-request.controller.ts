@@ -58,7 +58,18 @@ export class FriendRequestController {
     @Param('id', ParseIntPipe) id: number
   ) {
     const response = await this.friendRequestService.cancel({ id, userId });
-    this.event.emit('friendRequest.cancel');
+    this.event.emit(ServerEvents.FRIEND_REQUEST_CANCELED);
+    return response;
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 10000 } })
+  @Patch(':id/reject')
+  async rejectFriendRequest(
+    @AuthUser() { id: userId }: User,
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    const response = this.friendRequestService.reject({ id, userId });
+    this.event.emit(ServerEvents.FRIEND_REQUEST_REJECTED);
     return response;
   }
 }
