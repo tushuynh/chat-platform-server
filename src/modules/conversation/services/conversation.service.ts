@@ -8,6 +8,8 @@ import { CreateConversationException } from '../exceptions/createConversation.ex
 import { FriendService } from '@modules/friend/services/friend.service';
 import { FriendNotFoundException } from '@modules/friend/exceptions/friendNotFound.exception';
 import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exception';
+import { AccessParams } from '@shared/types';
+import { ConversationNotFoundException } from '../exceptions/conversationNotFound.exception';
 
 @Injectable()
 export class ConversationService {
@@ -111,5 +113,16 @@ export class ConversationService {
 
   save(conversation: Conversation): Promise<Conversation> {
     return this.conversationRepository.save(conversation);
+  }
+
+  async hasAccess({ id, userId }: AccessParams) {
+    const conversation = await this.findById(id);
+    if (!conversation) {
+      throw new ConversationNotFoundException();
+    }
+
+    return (
+      conversation.creator.id === userId || conversation.recipient.id === userId
+    );
   }
 }

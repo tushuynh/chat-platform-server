@@ -45,3 +45,8 @@ export type UploadMessageAttachmentParams = {
   file: Attachment;
   messageAttachment: MessageAttachment;
 };
+
+export type AccessParams = {
+  id: number;
+  userId: number;
+};

@@ -1,11 +1,15 @@
 import { Routes } from '@common/constants/constant';
 import { User } from '@common/database/entities';
 import { AuthUser } from '@common/decorators/authUser.decorator';
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ConversationService } from './services/conversation.service';
-import { CreateConversationDto } from './dtos/CreateConversation.dto';
+import { AuthenticatedGuard } from '@modules/auth/guards/authenticated.guard';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SkipThrottle } from '@nestjs/throttler';
+import { CreateConversationDto } from './dtos/CreateConversation.dto';
+import { ConversationService } from './services/conversation.service';
 
+@SkipThrottle()
+@UseGuards(AuthenticatedGuard)
 @Controller(Routes.CONVERSATIONS)
 export class ConversationController {
   constructor(
@@ -30,5 +34,10 @@ export class ConversationController {
     this.event.emit('conversation.create', conversation);
 
     return conversation;
+  }
+
+  @Get(':id')
+  async getConversationById(@Param('id') id: number) {
+    return this.conversationService.findById(id);
   }
 }
