@@ -3,6 +3,11 @@ import { Request } from 'express';
 
 export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
 
+export type CancelFriendRequestParams = {
+  id: number;
+  userId: number;
+};
+
 export type UserCredential = {
   username: string;
   password: string;

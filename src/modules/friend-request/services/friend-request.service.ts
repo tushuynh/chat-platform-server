@@ -3,11 +3,15 @@ import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exc
 import { UserService } from '@modules/user/services/user.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateFriendParams, FriendRequestParams } from '@shared/types';
+import {
+  CancelFriendRequestParams,
+  CreateFriendParams,
+  FriendRequestParams,
+} from '@shared/types';
 import { Repository } from 'typeorm';
 import { FriendRequestException } from '../exceptions/friendRequest.exception';
 import { FriendService } from '@modules/friend/services/friend.service';
-import { FriendRequestNotFound } from '../exceptions/friendRequestNotFound.exception';
+import { FriendRequestNotFoundException } from '../exceptions/friendRequestNotFound.exception';
 import { FriendRequestAcceptedException } from '../exceptions/friendRequestAccepted.exception';
 
 @Injectable()
@@ -66,7 +70,7 @@ export class FriendRequestService {
   async accept({ id, userId }: FriendRequestParams) {
     const friendRequest = await this.findById(id);
     if (!friendRequest) {
-      throw new FriendRequestNotFound();
+      throw new FriendRequestNotFoundException();
     }
 
     if (friendRequest.status === 'accepted') {
@@ -89,6 +93,20 @@ export class FriendRequestService {
       friend,
       friendRequest: updatedFriendRequest,
     };
+  }
+
+  async cancel({ id, userId }: CancelFriendRequestParams) {
+    const friendRequest = await this.findById(id);
+    if (!friendRequest) {
+      throw new FriendRequestNotFoundException();
+    }
+
+    if (friendRequest.sender.id !== userId) {
+      throw new FriendRequestException();
+    }
+
+    await this.friendRequestRepository.delete(id);
+    return friendRequest;
   }
 
   isPending(userOneId: number, userTwoId: number) {

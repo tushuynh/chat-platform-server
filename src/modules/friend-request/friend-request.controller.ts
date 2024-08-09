@@ -4,6 +4,7 @@ import { AuthUser } from '@common/decorators/authUser.decorator';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -47,6 +48,17 @@ export class FriendRequestController {
   ) {
     const response = this.friendRequestService.accept({ id, userId });
     this.event.emit(ServerEvents.FRIEND_REQUEST_ACCEPTED, response);
+    return response;
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 10000 } })
+  @Delete(':id/cancel')
+  async cancelFriendRequest(
+    @AuthUser() { id: userId }: User,
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    const response = await this.friendRequestService.cancel({ id, userId });
+    this.event.emit('friendRequest.cancel');
     return response;
   }
 }
