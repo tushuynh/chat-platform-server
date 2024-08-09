@@ -12,7 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Throttle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { Attachment } from '@shared/types';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { EmptyMessageException } from './exceptions/emptyMessage.exception';
@@ -49,5 +49,12 @@ export class MessageController {
     const response = await this.messageService.createMessage(params);
     this.eventEmitter.emit('message.create', response);
     return;
+  }
+
+  @SkipThrottle()
+  @Get()
+  async getMessagesFromConversation(@Param('id', ParseIntPipe) id: number) {
+    const messages = await this.messageService.getMessages(id);
+    return { id, messages };
   }
 }

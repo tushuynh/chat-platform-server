@@ -58,4 +58,12 @@ export class MessageService {
       conversation: updated,
     };
   }
+
+  async getMessages(conversationId: number) {
+    return this.messageRepository.find({
+      where: { conversation: { id: conversationId } },
+      relations: ['author', 'attachments', 'author.profile'],
+      order: { createdAt: 'DESC' },
+    });
+  }
 }
