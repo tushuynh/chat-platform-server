@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { ImageStorageService } from './services/imageStorage.service';
 import { S3 } from '@aws-sdk/client-s3';
 import { Services } from '@common/constants/constant';
 import { ConfigService } from '@nestjs/config';
 
-const awsS3Provider = {
+const awsS3Provider: Provider = {
   provide: Services.AWS_S3,
   inject: [ConfigService],
   useFactory: (configService: ConfigService) =>

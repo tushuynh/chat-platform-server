@@ -55,3 +55,19 @@ export type UpdateStatusMessageParams = {
   user: User;
   statusMessage: string;
 };
+
+export type UserProfileFiles = Partial<{
+  banner: Express.Multer.File[];
+  avatar: Express.Multer.File[];
+}>;
+
+export type UpdateUserProfileParams = Partial<{
+  about: string;
+  banner: Express.Multer.File;
+  avatar: Express.Multer.File;
+}>;
+
+export type UploadImageParams = {
+  key: string;
+  file: Express.Multer.File;
+};
