@@ -1,5 +1,5 @@
 import { Routes, ServerEvents } from '@common/constants/constant';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GroupService } from '../services/group.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AuthUser } from '@common/decorators/authUser.decorator';
@@ -28,5 +28,10 @@ export class GroupController {
   @Get()
   getGroups(@AuthUser() user: User) {
     return this.groupService.getGroups({ userId: user.id });
+  }
+
+  @Get(':id')
+  getGroup(@Param(':id') id: number) {
+    return this.groupService.findGroupById(id);
   }
 }

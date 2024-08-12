@@ -13,6 +13,7 @@ export enum Routes {
   USERS_PROFILES = 'users/profiles',
   CONVERSATIONS = 'conversations',
   GROUPS = 'groups',
+  GROUPS_MESSAGES = 'groups/:id/messages',
   MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
   FRIEND_REQUESTS = 'friends/requests',

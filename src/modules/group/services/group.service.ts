@@ -40,4 +40,18 @@ export class GroupService {
       .orderBy('group.lastMessageSentAt', 'DESC')
       .getMany();
   }
+
+  findGroupById(id: number): Promise<Group> {
+    return this.groupRepository.findOne({
+      where: { id },
+      relations: [
+        'creator',
+        'users',
+        'lastMessageSent',
+        'owner',
+        'users.profile',
+        'users.presence',
+      ],
+    });
+  }
 }
