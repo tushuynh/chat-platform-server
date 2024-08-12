@@ -110,3 +110,7 @@ export type UploadImageParams = {
   key: string;
   file: Express.Multer.File;
 };
+
+export type FetchGroupsParams = {
+  userId: number;
+};

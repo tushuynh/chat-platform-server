@@ -12,6 +12,7 @@ export enum Routes {
   USERS_PRESENCE = 'users/presence',
   USERS_PROFILES = 'users/profiles',
   CONVERSATIONS = 'conversations',
+  GROUPS = 'groups',
   MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
   FRIEND_REQUESTS = 'friends/requests',
