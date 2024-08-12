@@ -114,3 +114,9 @@ export type UploadImageParams = {
 export type FetchGroupsParams = {
   userId: number;
 };
+
+export type CreateGroupParams = {
+  creator: User;
+  users: string[];
+  title?: string;
+};

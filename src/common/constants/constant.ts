@@ -25,6 +25,7 @@ export enum ServerEvents {
   FRIEND_REMOVED = 'friend.removed',
   MESSAGE_UPDATED = 'message.updated',
   MESSAGE_DELETED = 'message.deleted',
+  GROUP_CREATED = 'group.created',
 }
 
 export enum Services {
