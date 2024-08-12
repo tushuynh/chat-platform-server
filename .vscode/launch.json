@@ -2,23 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Nestjs",
       "type": "node",
       "request": "launch",
-      "name": "Debug Server",
-      "args": [
-        "${workspaceFolder}/src/main.ts"
-      ],
+      "args": ["src/main.ts"],
       "runtimeArgs": [
-        "--nolazy",
         "-r",
         "ts-node/register",
         "-r",
         "tsconfig-paths/register"
       ],
-      "sourceMaps": true,
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "sourceMaps": true,
+      "console": "internalConsole",
+      "outputCapture": "std"
     }
   ]
 }

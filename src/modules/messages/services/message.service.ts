@@ -1,15 +1,21 @@
-import { Message } from '@common/database/entities';
+import { Conversation, Message } from '@common/database/entities';
 import { ConversationNotFoundException } from '@modules/conversation/exceptions/conversationNotFound.exception';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 import { FriendNotFoundException } from '@modules/friend/exceptions/friendNotFound.exception';
 import { FriendService } from '@modules/friend/services/friend.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateMessageParams, EditMessageParams } from '@shared/types';
+import {
+  CreateMessageParams,
+  DeleteMessageParams,
+  EditMessageParams,
+} from '@shared/types';
 import { Repository } from 'typeorm';
 import { CannotCreateMessageException } from '../exceptions/cannotCreateMessage.exception';
 import { instanceToPlain } from 'class-transformer';
 import { MessageAttachmentService } from '@modules/messageAttachment/services/messageAttachment.service';
+import { buildFindMessageParams } from '@shared/builder';
+import { CannotDeleteMessageException } from '../exceptions/cannotDeleteMessage.exception';
 
 @Injectable()
 export class MessageService {
@@ -87,5 +93,48 @@ export class MessageService {
 
     message.content = params.content;
     return this.messageRepository.save(message);
+  }
+
+  async deleteMessage(params: DeleteMessageParams) {
+    const { conversationId } = params;
+    const msgParams = { id: conversationId, limit: 5 };
+    const conversation = await this.conversationService.getMessages(msgParams);
+    if (!conversation) {
+      throw new ConversationNotFoundException();
+    }
+
+    const findMessageParams = buildFindMessageParams(params);
+    const message = await this.messageRepository.findOne({
+      where: findMessageParams,
+    });
+    if (!message) {
+      throw new CannotDeleteMessageException();
+    }
+
+    if (conversation.lastMessageSent.id !== message.id) {
+      return this.messageRepository.delete({ id: message.id });
+    }
+
+    return this.deleteLastMessage(conversation, message);
+  }
+
+  async deleteLastMessage(conversation: Conversation, message: Message) {
+    const size = conversation.messages.length;
+    const SECOND_MESSAGE_INDEX = 1;
+
+    if (size <= 1) {
+      await this.conversationService.update({
+        id: conversation.id,
+        lastMessageSent: null,
+      });
+    } else {
+      const newLastMessage = conversation.messages[SECOND_MESSAGE_INDEX];
+      await this.conversationService.update({
+        id: conversation.id,
+        lastMessageSent: newLastMessage,
+      });
+    }
+
+    return this.messageRepository.delete({ id: message.id });
   }
 }

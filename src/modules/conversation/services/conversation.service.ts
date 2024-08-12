@@ -8,7 +8,11 @@ import { CreateConversationException } from '../exceptions/createConversation.ex
 import { FriendService } from '@modules/friend/services/friend.service';
 import { FriendNotFoundException } from '@modules/friend/exceptions/friendNotFound.exception';
 import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exception';
-import { AccessParams } from '@shared/types';
+import {
+  AccessParams,
+  GetConversationMessagesParams,
+  UpdateConversationParams,
+} from '@shared/types';
 import { ConversationNotFoundException } from '../exceptions/conversationNotFound.exception';
 
 @Injectable()
@@ -124,5 +128,24 @@ export class ConversationService {
     return (
       conversation.creator.id === userId || conversation.recipient.id === userId
     );
+  }
+
+  async getMessages({
+    id,
+    limit,
+  }: GetConversationMessagesParams): Promise<Conversation> {
+    return this.conversationRepository
+      .createQueryBuilder('conversation')
+      .where('id = :id', { id })
+      .leftJoinAndSelect('conversation.lastMessageSent', 'lastMessageSent')
+      .leftJoinAndSelect('conversation.messages', 'message')
+      .where('conversation.id = :id', { id })
+      .orderBy('message.createdAt', 'DESC')
+      .limit(limit)
+      .getOne();
+  }
+
+  update({ id, lastMessageSent }: UpdateConversationParams) {
+    return this.conversationRepository.update(id, { lastMessageSent });
   }
 }

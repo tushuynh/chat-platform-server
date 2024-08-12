@@ -1,4 +1,4 @@
-import { MessageAttachment, User } from '@common/database/entities';
+import { Message, MessageAttachment, User } from '@common/database/entities';
 import { Request } from 'express';
 
 export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
@@ -56,6 +56,28 @@ export type EditMessageParams = {
   messageId: number;
   userId: number;
   content: string;
+};
+
+export type DeleteMessageParams = {
+  userId: number;
+  conversationId: number;
+  messageId: number;
+};
+
+export type GetConversationMessagesParams = {
+  id: number;
+  limit: number;
+};
+
+export type UpdateConversationParams = Partial<{
+  id: number;
+  lastMessageSent: Message;
+}>;
+
+export type FindMessageParams = {
+  userId: number;
+  conversationId: number;
+  messageId: number;
 };
 
 export type UploadMessageAttachmentParams = {

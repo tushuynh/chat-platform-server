@@ -4,6 +4,7 @@ import { AuthUser } from '@common/decorators/authUser.decorator';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -71,5 +72,17 @@ export class MessageController {
     const message = await this.messageService.editMessage(params);
     this.eventEmitter.emit(ServerEvents.MESSAGE_UPDATED);
     return message;
+  }
+
+  @Delete(':messageId')
+  async deleteMessageFromConversation(
+    @AuthUser() user: User,
+    @Param('id', ParseIntPipe) conversationId: number,
+    @Param('messageId', ParseIntPipe) messageId: number
+  ) {
+    const params = { userId: user.id, conversationId, messageId };
+    await this.messageService.deleteMessage(params);
+    this.eventEmitter.emit(ServerEvents.MESSAGE_DELETED);
+    return { conversationId, messageId };
   }
 }
