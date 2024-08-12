@@ -51,6 +51,13 @@ export type CreateMessageParams = {
   user: User;
 };
 
+export type EditMessageParams = {
+  conversationId: number;
+  messageId: number;
+  userId: number;
+  content: string;
+};
+
 export type UploadMessageAttachmentParams = {
   file: Attachment;
   messageAttachment: MessageAttachment;

@@ -1,4 +1,4 @@
-import { Routes } from '@common/constants/constant';
+import { Routes, ServerEvents } from '@common/constants/constant';
 import { User } from '@common/database/entities';
 import { AuthUser } from '@common/decorators/authUser.decorator';
 import {
@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -18,6 +19,7 @@ import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { EmptyMessageException } from './exceptions/emptyMessage.exception';
 import { MessageService } from './services/message.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EditMessageDto } from './dtos/editMessage.dto';
 
 @Controller(Routes.MESSAGES)
 export class MessageController {
@@ -56,5 +58,18 @@ export class MessageController {
   async getMessagesFromConversation(@Param('id', ParseIntPipe) id: number) {
     const messages = await this.messageService.getMessages(id);
     return { id, messages };
+  }
+
+  @Patch(':messageId')
+  async editMessage(
+    @AuthUser() { id: userId }: User,
+    @Param('id') conversationId: number,
+    @Param('messageId') messageId: number,
+    @Body() { content }: EditMessageDto
+  ) {
+    const params = { userId, content, conversationId, messageId };
+    const message = await this.messageService.editMessage(params);
+    this.eventEmitter.emit(ServerEvents.MESSAGE_UPDATED);
+    return message;
   }
 }

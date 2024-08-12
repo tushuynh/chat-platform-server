@@ -3,9 +3,9 @@ import { ConversationNotFoundException } from '@modules/conversation/exceptions/
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 import { FriendNotFoundException } from '@modules/friend/exceptions/friendNotFound.exception';
 import { FriendService } from '@modules/friend/services/friend.service';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateMessageParams } from '@shared/types';
+import { CreateMessageParams, EditMessageParams } from '@shared/types';
 import { Repository } from 'typeorm';
 import { CannotCreateMessageException } from '../exceptions/cannotCreateMessage.exception';
 import { instanceToPlain } from 'class-transformer';
@@ -65,5 +65,27 @@ export class MessageService {
       relations: ['author', 'attachments', 'author.profile'],
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async editMessage(params: EditMessageParams) {
+    const message = await this.messageRepository.findOne({
+      where: {
+        id: params.messageId,
+        author: { id: params.userId },
+      },
+      relations: [
+        'conversation',
+        'conversation.creator',
+        'conversation.recipient',
+        'author',
+        'author.profile',
+      ],
+    });
+    if (!message) {
+      throw new HttpException('Cannot edit message', HttpStatus.BAD_REQUEST);
+    }
+
+    message.content = params.content;
+    return this.messageRepository.save(message);
   }
 }

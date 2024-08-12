@@ -22,6 +22,7 @@ export enum ServerEvents {
   FRIEND_REQUEST_CANCELED = 'friendRequest.canceled',
   FRIEND_REQUEST_REJECTED = 'friendRequest.rejected',
   FRIEND_REMOVED = 'friend.removed',
+  MESSAGE_UPDATED = 'message.updated',
 }
 
 export enum Services {
