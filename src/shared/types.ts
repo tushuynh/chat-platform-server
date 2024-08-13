@@ -149,3 +149,10 @@ export type CreateGroupMessageParams = {
   content: string;
   groupId: number;
 };
+
+export type EditGroupMessageParams = {
+  groupId: number;
+  messageId: number;
+  userId: number;
+  content: string;
+};

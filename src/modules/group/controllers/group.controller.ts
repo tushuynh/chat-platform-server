@@ -35,7 +35,7 @@ export class GroupController {
       ...payload,
       creator: user,
     });
-    this.eventEmitter.emit(ServerEvents.GROUP_CREATED);
+    this.eventEmitter.emit(ServerEvents.GROUP_CREATED, group);
     return group;
   }
 

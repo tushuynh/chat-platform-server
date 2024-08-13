@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -18,6 +19,7 @@ import { Attachment } from '@shared/types';
 import { User } from '@common/database/entities';
 import { CreateMessageDto } from '@modules/messages/dtos/CreateMessage.dto';
 import { EmptyMessageException } from '@modules/messages/exceptions/emptyMessage.exception';
+import { EditMessageDto } from '@modules/messages/dtos/editMessage.dto';
 
 @Controller(Routes.GROUPS_MESSAGES)
 export class GroupMessageController {
@@ -54,8 +56,22 @@ export class GroupMessageController {
     }
 
     const params = { groupId: id, author: user, content, attachments };
-    await this.groupMessageService.createGroupMessages(params);
-    this.eventEmitter.emit(ServerEvents.GROUP_MESSAGE_CREATED);
+    const response = await this.groupMessageService.createGroupMessages(params);
+    this.eventEmitter.emit(ServerEvents.GROUP_MESSAGE_CREATED, response);
     return;
+  }
+
+  @SkipThrottle()
+  @Patch(':messageId')
+  async editGroupMessage(
+    @AuthUser() { id: userId }: User,
+    @Param('id', ParseIntPipe) groupId: number,
+    @Param('messageId', ParseIntPipe) messageId: number,
+    @Body() { content }: EditMessageDto
+  ) {
+    const params = { userId, content, groupId, messageId };
+    const message = await this.groupMessageService.editGroupMessage(params);
+    this.eventEmitter.emit(ServerEvents.GROUP_MESSAGE_UPDATED, message);
+    return message;
   }
 }

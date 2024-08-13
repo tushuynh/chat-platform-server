@@ -1,7 +1,10 @@
 import { GroupMessage } from '@common/database/entities';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateGroupMessageParams } from '@shared/types';
+import {
+  CreateGroupMessageParams,
+  EditGroupMessageParams,
+} from '@shared/types';
 import { Repository } from 'typeorm';
 import { GroupService } from './group.service';
 import { GroupNotFoundException } from '../exceptions/groupNotFound.exception';
@@ -57,5 +60,21 @@ export class GroupMessageService {
     group.lastMessageSent = saveMessage;
     const updatedGroup = await this.groupService.saveGroup(group);
     return { message: saveMessage, group: updatedGroup };
+  }
+
+  async editGroupMessage(params: EditGroupMessageParams) {
+    const message = await this.groupMessageRepository.findOne({
+      where: {
+        id: params.messageId,
+        author: { id: params.userId },
+      },
+      relations: ['group', 'group.creator', 'group.users', 'author'],
+    });
+    if (!message) {
+      throw new HttpException('Cannot edit message', HttpStatus.BAD_REQUEST);
+    }
+
+    message.content = params.content;
+    return this.groupMessageRepository.save(message);
   }
 }

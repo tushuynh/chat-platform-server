@@ -70,7 +70,7 @@ export class MessageController {
   ) {
     const params = { userId, content, conversationId, messageId };
     const message = await this.messageService.editMessage(params);
-    this.eventEmitter.emit(ServerEvents.MESSAGE_UPDATED);
+    this.eventEmitter.emit(ServerEvents.MESSAGE_UPDATED, message);
     return message;
   }
 
@@ -82,7 +82,7 @@ export class MessageController {
   ) {
     const params = { userId: user.id, conversationId, messageId };
     await this.messageService.deleteMessage(params);
-    this.eventEmitter.emit(ServerEvents.MESSAGE_DELETED);
+    this.eventEmitter.emit(ServerEvents.MESSAGE_DELETED, params);
     return { conversationId, messageId };
   }
 }

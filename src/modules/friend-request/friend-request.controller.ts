@@ -58,7 +58,7 @@ export class FriendRequestController {
     @Param('id', ParseIntPipe) id: number
   ) {
     const response = await this.friendRequestService.cancel({ id, userId });
-    this.event.emit(ServerEvents.FRIEND_REQUEST_CANCELED);
+    this.event.emit(ServerEvents.FRIEND_REQUEST_CANCELED, response);
     return response;
   }
 
@@ -69,7 +69,7 @@ export class FriendRequestController {
     @Param('id', ParseIntPipe) id: number
   ) {
     const response = this.friendRequestService.reject({ id, userId });
-    this.event.emit(ServerEvents.FRIEND_REQUEST_REJECTED);
+    this.event.emit(ServerEvents.FRIEND_REQUEST_REJECTED, response);
     return response;
   }
 }
