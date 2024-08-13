@@ -2,6 +2,7 @@ import { Routes, ServerEvents } from '@common/constants/constant';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -73,5 +74,18 @@ export class GroupMessageController {
     const message = await this.groupMessageService.editGroupMessage(params);
     this.eventEmitter.emit(ServerEvents.GROUP_MESSAGE_UPDATED, message);
     return message;
+  }
+
+  @SkipThrottle()
+  @Delete(':messageId')
+  async deleteGroupMessage(
+    @AuthUser() user: User,
+    @Param('id', ParseIntPipe) groupId: number,
+    @Param('messageId', ParseIntPipe) messageId: number
+  ) {
+    const params = { userId: user.id, groupId, messageId };
+    await this.groupMessageService.deleteGroupMessage(params);
+    this.eventEmitter.emit(ServerEvents.GROUP_MESSAGE_DELETED, params);
+    return { groupId, messageId };
   }
 }
