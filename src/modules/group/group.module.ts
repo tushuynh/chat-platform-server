@@ -9,12 +9,14 @@ import { GroupMessageService } from './services/groupMessage.service';
 import { ImageStorageModule } from '@modules/imageStorage/imageStorage.module';
 import { isAuthorized } from '@common/middlewares/isAuthorized.middleware';
 import { GroupMiddleware } from './middlewares/group.middleware';
+import { MessageAttachmentModule } from '@modules/messageAttachment/messageAttachment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group, GroupMessage]),
     UserModule,
     ImageStorageModule,
+    MessageAttachmentModule,
   ],
   controllers: [GroupController, GroupMessageController],
   providers: [GroupService, GroupMessageService],

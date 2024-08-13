@@ -28,6 +28,7 @@ export enum ServerEvents {
   MESSAGE_DELETED = 'message.deleted',
   GROUP_CREATED = 'group.created',
   GROUP_OWNER_UPDATED = 'group.owner.updated',
+  GROUP_MESSAGE_CREATED = 'group.message.created',
 }
 
 export enum Services {

@@ -7,5 +7,6 @@ export default registerAs(
     secretAccessKey: process.env.AWS_ACCESS_SECRET,
     endpoint: process.env.AWS_ENDPOINT,
     region: process.env.AWS_REGION,
+    bucket: process.env.AWS_BUCKET,
   })
 );

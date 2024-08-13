@@ -1,4 +1,9 @@
-import { Message, MessageAttachment, User } from '@common/database/entities';
+import {
+  GroupMessageAttachment,
+  Message,
+  MessageAttachment,
+  User,
+} from '@common/database/entities';
 import { Request } from 'express';
 
 export type FriendRequestStatus = 'accepted' | 'pending' | 'rejected';
@@ -85,6 +90,11 @@ export type UploadMessageAttachmentParams = {
   messageAttachment: MessageAttachment;
 };
 
+export type UploadGroupMessageAttachmentParams = {
+  file: Attachment;
+  messageAttachment: GroupMessageAttachment;
+};
+
 export type AccessParams = {
   id: number;
   userId: number;
@@ -131,4 +141,11 @@ export type TransferGroupOwnerParams = {
   userId: number;
   groupId: number;
   newOwnerId: number;
+};
+
+export type CreateGroupMessageParams = {
+  author: User;
+  attachments: Attachment[];
+  content: string;
+  groupId: number;
 };

@@ -123,4 +123,8 @@ export class GroupService {
 
     return group.users.find((user) => user.id === userId);
   }
+
+  saveGroup(group: Group): Promise<Group> {
+    return this.groupRepository.save(group);
+  }
 }
