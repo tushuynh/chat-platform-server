@@ -19,6 +19,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { UpdateGroupDetailsDto } from '../dtos/updateGroupDetails.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Attachment } from '@shared/types';
+import { TransferOwnerDto } from '../dtos/transferOwner.dto';
 
 @SkipThrottle()
 @Controller(Routes.GROUPS)
@@ -56,5 +57,17 @@ export class GroupController {
     @UploadedFile() avatar: Attachment
   ) {
     return this.groupService.updateDetails({ id, avatar, title });
+  }
+
+  @Patch(':id/owner')
+  async updateGroupOwner(
+    @AuthUser() { id: userId }: User,
+    @Param('id', ParseIntPipe) groupId: number,
+    @Body() { newOwnerId }: TransferOwnerDto
+  ) {
+    const params = { userId, groupId, newOwnerId };
+    const group = await this.groupService.transferGroupOwner(params);
+    this.eventEmitter.emit(ServerEvents.GROUP_OWNER_UPDATED, group);
+    return group;
   }
 }

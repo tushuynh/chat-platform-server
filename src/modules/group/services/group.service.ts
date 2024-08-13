@@ -5,12 +5,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   CreateGroupParams,
   FetchGroupsParams,
+  TransferGroupOwnerParams,
   UpdateGroupDetailsParams,
 } from '@shared/types';
 import { Repository } from 'typeorm';
 import { GroupNotFoundException } from '../exceptions/groupNotFound.exception';
 import { generateUUIDV4 } from '@shared/generation';
 import { ImageStorageService } from '@modules/imageStorage/services/imageStorage.service';
+import { GroupOwnerTransferException } from '../exceptions/groupOwnerTransfer.exception';
+import { UserNotFoundException } from '@modules/user/exceptions/UserNotFound.exception';
 
 @Injectable()
 export class GroupService {
@@ -79,6 +82,35 @@ export class GroupService {
     }
 
     params.title && (group.title = params.title);
+    return this.groupRepository.save(group);
+  }
+
+  async transferGroupOwner({
+    userId,
+    groupId,
+    newOwnerId,
+  }: TransferGroupOwnerParams): Promise<Group> {
+    const group = await this.findGroupById(groupId);
+    if (!group) {
+      throw new GroupNotFoundException();
+    }
+
+    if (group.owner.id !== userId) {
+      throw new GroupOwnerTransferException('Insufficient permissions');
+    }
+
+    if (group.owner.id === newOwnerId) {
+      throw new GroupOwnerTransferException(
+        'Cannot transfer owner to yourself'
+      );
+    }
+
+    const newOwner = await this.userService.findUser({ id: newOwnerId });
+    if (!newOwner) {
+      throw new UserNotFoundException();
+    }
+
+    group.owner = newOwner;
     return this.groupRepository.save(group);
   }
 }
