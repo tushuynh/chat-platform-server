@@ -120,3 +120,9 @@ export type CreateGroupParams = {
   users: string[];
   title?: string;
 };
+
+export type UpdateGroupDetailsParams = {
+  id: number;
+  title?: string;
+  avatar?: Attachment;
+};

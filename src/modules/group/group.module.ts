@@ -6,9 +6,14 @@ import { Group, GroupMessage } from '@common/database/entities';
 import { UserModule } from '@modules/user/user.module';
 import { GroupMessageController } from './controllers/groupMessage.controller';
 import { GroupMessageService } from './services/groupMessage.service';
+import { ImageStorageModule } from '@modules/imageStorage/imageStorage.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Group, GroupMessage]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Group, GroupMessage]),
+    UserModule,
+    ImageStorageModule,
+  ],
   controllers: [GroupController, GroupMessageController],
   providers: [GroupService, GroupMessageService],
   exports: [GroupService, GroupMessageService],
