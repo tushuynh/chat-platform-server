@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GroupController } from './controllers/group.controller';
 import { GroupService } from './services/group.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,8 @@ import { UserModule } from '@modules/user/user.module';
 import { GroupMessageController } from './controllers/groupMessage.controller';
 import { GroupMessageService } from './services/groupMessage.service';
 import { ImageStorageModule } from '@modules/imageStorage/imageStorage.module';
+import { isAuthorized } from '@common/middlewares/isAuthorized.middleware';
+import { GroupMiddleware } from './middlewares/group.middleware';
 
 @Module({
   imports: [
@@ -16,6 +18,10 @@ import { ImageStorageModule } from '@modules/imageStorage/imageStorage.module';
   ],
   controllers: [GroupController, GroupMessageController],
   providers: [GroupService, GroupMessageService],
-  exports: [GroupService, GroupMessageService],
+  exports: [GroupService],
 })
-export class GroupModule {}
+export class GroupModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(isAuthorized, GroupMiddleware).forRoutes('groups/:id');
+  }
+}

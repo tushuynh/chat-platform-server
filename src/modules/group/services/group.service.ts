@@ -1,8 +1,9 @@
-import { Group } from '@common/database/entities';
+import { Group, User } from '@common/database/entities';
 import { UserService } from '@modules/user/services/user.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  AccessParams,
   CreateGroupParams,
   FetchGroupsParams,
   TransferGroupOwnerParams,
@@ -112,5 +113,14 @@ export class GroupService {
 
     group.owner = newOwner;
     return this.groupRepository.save(group);
+  }
+
+  async hasAccess({ id, userId }: AccessParams): Promise<User | undefined> {
+    const group = await this.findGroupById(id);
+    if (!group) {
+      throw new GroupNotFoundException();
+    }
+
+    return group.users.find((user) => user.id === userId);
   }
 }
