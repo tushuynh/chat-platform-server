@@ -18,6 +18,7 @@ export enum Routes {
   MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
   FRIEND_REQUESTS = 'friends/requests',
+  EXISTS = 'exists',
 }
 
 export enum ServerEvents {
@@ -25,6 +26,7 @@ export enum ServerEvents {
   FRIEND_REQUEST_CANCELED = 'friendRequest.canceled',
   FRIEND_REQUEST_REJECTED = 'friendRequest.rejected',
   FRIEND_REMOVED = 'friend.removed',
+  CONVERSATION_CREATED = 'conversation.created',
   MESSAGE_UPDATED = 'message.updated',
   MESSAGE_DELETED = 'message.deleted',
   GROUP_CREATED = 'group.created',

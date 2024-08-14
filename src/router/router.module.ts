@@ -1,5 +1,6 @@
 import { AuthModule } from '@modules/auth/auth.module';
 import { ConversationModule } from '@modules/conversation/conversation.module';
+import { ExistModule } from '@modules/exist/exist.module';
 import { FriendRequestModule } from '@modules/friend-request/friend-request.module';
 import { FriendModule } from '@modules/friend/friend.module';
 import { GroupModule } from '@modules/group/group.module';
@@ -16,6 +17,7 @@ import { Module } from '@nestjs/common';
     FriendModule,
     FriendRequestModule,
     MessageModule,
+    ExistModule,
   ],
   providers: [],
 })
