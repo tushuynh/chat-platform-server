@@ -33,6 +33,7 @@ export enum ServerEvents {
   GROUP_MESSAGE_UPDATED = 'group.message.updated',
   GROUP_MESSAGE_DELETED = 'group.message.deleted',
   GROUP_RECIPIENT_ADDED = 'group.recipient.added',
+  GROUP_RECIPIENT_LEFT = 'group.recipient.left',
 }
 
 export enum Services {

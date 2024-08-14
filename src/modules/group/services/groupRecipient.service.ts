@@ -1,8 +1,13 @@
 import { UserService } from '@modules/user/services/user.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AddGroupRecipientParams } from '@shared/types';
+import {
+  AddGroupRecipientParams,
+  CheckUserGroupParams,
+  LeaveGroupParams,
+} from '@shared/types';
 import { GroupService } from './group.service';
 import { GroupNotFoundException } from '../exceptions/groupNotFound.exception';
+import { GroupParticipantNotFoundException } from '../exceptions/groupParticipantNotFound.exception';
 
 @Injectable()
 export class GroupRecipientService {
@@ -39,5 +44,32 @@ export class GroupRecipientService {
     group.users.push(recipient);
     const savedGroup = await this.groupService.saveGroup(group);
     return { group: savedGroup, user: recipient };
+  }
+
+  async leaveGroup({ id, userId }: LeaveGroupParams) {
+    const group = await this.isUserInGroup({ id, userId });
+    if (group.owner.id === userId) {
+      throw new HttpException(
+        'Cannot leave group as owner',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    group.users = group.users.filter((user) => user.id !== userId);
+    return this.groupService.saveGroup(group);
+  }
+
+  async isUserInGroup({ id, userId }: CheckUserGroupParams) {
+    const group = await this.groupService.findGroupById(id);
+    if (!group) {
+      throw new GroupNotFoundException();
+    }
+
+    const user = group.users.find((user) => user.id === userId);
+    if (!user) {
+      throw new GroupParticipantNotFoundException();
+    }
+
+    return group;
   }
 }
