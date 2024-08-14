@@ -174,6 +174,12 @@ export type AddGroupRecipientParams = {
   userId: number;
 };
 
+export type RemoveGroupRecipientParams = {
+  userId: number;
+  groupId: number;
+  removeUserId: number;
+};
+
 export type LeaveGroupParams = {
   id: number;
   userId: number;
