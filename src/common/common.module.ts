@@ -17,7 +17,6 @@ if (process.env.APP_ENVIRONMENT === 'production')
       envFilePath,
     }),
     ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => [
         {
