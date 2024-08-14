@@ -5,6 +5,7 @@ import { FriendRequestModule } from '@modules/friend-request/friend-request.modu
 import { FriendModule } from '@modules/friend/friend.module';
 import { GroupModule } from '@modules/group/group.module';
 import { MessageModule } from '@modules/messages/message.module';
+import { SocketModule } from '@modules/socket/socket.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 
@@ -18,6 +19,7 @@ import { Module } from '@nestjs/common';
     FriendRequestModule,
     MessageModule,
     ExistModule,
+    SocketModule,
   ],
   providers: [],
 })

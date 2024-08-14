@@ -8,6 +8,7 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { DataSource } from 'typeorm';
 import { AppModule } from './app.module';
+import { SocketAdapter } from '@modules/socket/socket.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -18,6 +19,9 @@ async function bootstrap() {
 
   const logger = new Logger(AppModule.name);
   const sessionRepository = app.get(DataSource).getRepository(Session);
+
+  const socketAdapter = new SocketAdapter(app);
+  app.useWebSocketAdapter(socketAdapter);
 
   app.setGlobalPrefix(globalPrefix);
   app.enableCors({ origin: allowOrigin, credentials: true });
