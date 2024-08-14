@@ -10,6 +10,8 @@ import { ImageStorageModule } from '@modules/imageStorage/imageStorage.module';
 import { isAuthorized } from '@common/middlewares/isAuthorized.middleware';
 import { GroupMiddleware } from './middlewares/group.middleware';
 import { MessageAttachmentModule } from '@modules/messageAttachment/messageAttachment.module';
+import { GroupRecipientController } from './controllers/groupRecipient.controller';
+import { GroupRecipientService } from './services/groupRecipient.service';
 
 @Module({
   imports: [
@@ -18,8 +20,12 @@ import { MessageAttachmentModule } from '@modules/messageAttachment/messageAttac
     ImageStorageModule,
     MessageAttachmentModule,
   ],
-  controllers: [GroupController, GroupMessageController],
-  providers: [GroupService, GroupMessageService],
+  controllers: [
+    GroupController,
+    GroupMessageController,
+    GroupRecipientController,
+  ],
+  providers: [GroupService, GroupMessageService, GroupRecipientService],
   exports: [GroupService],
 })
 export class GroupModule implements NestModule {

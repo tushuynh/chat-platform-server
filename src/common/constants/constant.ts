@@ -14,6 +14,7 @@ export enum Routes {
   CONVERSATIONS = 'conversations',
   GROUPS = 'groups',
   GROUPS_MESSAGES = 'groups/:id/messages',
+  GROUPS_RECIPIENTS = 'groups/:id/recipients',
   MESSAGES = 'conversations/:id/messages',
   FRIENDS = 'friends',
   FRIEND_REQUESTS = 'friends/requests',
@@ -31,6 +32,7 @@ export enum ServerEvents {
   GROUP_MESSAGE_CREATED = 'group.message.created',
   GROUP_MESSAGE_UPDATED = 'group.message.updated',
   GROUP_MESSAGE_DELETED = 'group.message.deleted',
+  GROUP_RECIPIENT_ADDED = 'group.recipient.added',
 }
 
 export enum Services {

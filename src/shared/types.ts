@@ -167,3 +167,9 @@ export type GetGroupMessagesParams = {
   id: number;
   limit: number;
 };
+
+export type AddGroupRecipientParams = {
+  id: number;
+  username: string;
+  userId: number;
+};
