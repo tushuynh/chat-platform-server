@@ -121,4 +121,30 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     client.to(`group-${data.groupId}`).emit('userGroupLeave');
   }
+
+  @SubscribeMessage('onTypingStart')
+  onTypingStart(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} start typing in conversationId: ${data.conversationId}`
+    );
+
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+    client.to(`conversation-${data.conversationId}`).emit('onTypingStart');
+  }
+
+  @SubscribeMessage('onTypingStop')
+  onTypingStop(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} stop typing in conversationId: ${data.conversationId}`
+    );
+
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+    client.to(`conversation-${data.conversationId}`).emit('onTypingStop');
+  }
 }
