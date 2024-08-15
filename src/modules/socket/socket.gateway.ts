@@ -61,4 +61,34 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     socket.emit('onlineGroupUsersReceived', { onlineUsers, offlineUsers });
   }
+
+  @SubscribeMessage('onConversationJoin')
+  onConversationJoin(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} joined a conversationId: ${data.conversationId}`
+    );
+
+    client.join(`conversation-${data.conversationId}`);
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+
+    client.to(`conversation-${data.conversationId}`).emit('userJoin');
+  }
+
+  @SubscribeMessage('onConversationLeave')
+  onConversationLeave(
+    @MessageBody() data: { conversationId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} left a conversationId: ${data.conversationId}`
+    );
+
+    client.leave(`conversation-${data.conversationId}`);
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+
+    client.to(`conversation-${data.conversationId}`).emit('userLeave');
+  }
 }
