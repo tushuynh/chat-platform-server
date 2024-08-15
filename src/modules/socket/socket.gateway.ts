@@ -74,7 +74,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.join(`conversation-${data.conversationId}`);
     console.log(`userId ${client.user.id} rooms:`, client.rooms);
 
-    client.to(`conversation-${data.conversationId}`).emit('userJoin');
+    client
+      .to(`conversation-${data.conversationId}`)
+      .emit('userConversationJoin');
   }
 
   @SubscribeMessage('onConversationLeave')
@@ -89,6 +91,34 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.leave(`conversation-${data.conversationId}`);
     console.log(`userId ${client.user.id} rooms:`, client.rooms);
 
-    client.to(`conversation-${data.conversationId}`).emit('userLeave');
+    client
+      .to(`conversation-${data.conversationId}`)
+      .emit('userConversationLeave');
+  }
+
+  @SubscribeMessage('onGroupJoin')
+  onGroupJoin(
+    @MessageBody() data: { groupId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(`userId ${client.user.id} join a groupId: ${data.groupId}`);
+
+    client.join(`group-${data.groupId}`);
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+
+    client.to(`group-${data.groupId}`).emit('userGroupJoin');
+  }
+
+  @SubscribeMessage('onGroupLeave')
+  onGroupLeave(
+    @MessageBody() data: { groupId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(`userId ${client.user.id} left a groupId: ${data.groupId}`);
+
+    client.leave(`group-${data.groupId}`);
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+
+    client.to(`group-${data.groupId}`).emit('userGroupLeave');
   }
 }
