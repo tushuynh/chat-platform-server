@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SocketGateway } from './socket.gateway';
 import { SocketSessionService } from './services/socketSession.service';
+import { GroupModule } from '@modules/group/group.module';
 
 @Module({
-  imports: [],
+  imports: [GroupModule],
   providers: [SocketGateway, SocketSessionService],
   exports: [SocketGateway, SocketSessionService],
 })
