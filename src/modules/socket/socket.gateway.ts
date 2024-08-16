@@ -15,6 +15,7 @@ import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
 import { CreateMessageResponse } from '@shared/types';
+import { Conversation } from '@common/database/entities';
 
 const webSocketConfig: GatewayMetadata = {
   cors: {
@@ -155,5 +156,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleMessageCreatedEvent(payload: CreateMessageResponse) {
     const conversationId = payload.conversation.id;
     this.server.to(`conversation-${conversationId}`).emit('onMessage', payload);
+  }
+
+  @OnEvent(ServerEvents.CONVERSATION_CREATED)
+  handleConversationCreatedEvent(payload: Conversation) {
+    const recipientSocket = this.sessions.getUserSocket(payload.recipient.id);
+    if (recipientSocket) {
+      recipientSocket.emit('onConversation', payload);
+    }
   }
 }

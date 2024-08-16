@@ -1,4 +1,4 @@
-import { Routes } from '@common/constants/constant';
+import { Routes, ServerEvents } from '@common/constants/constant';
 import { User } from '@common/database/entities';
 import { AuthUser } from '@common/decorators/authUser.decorator';
 import { AuthenticatedGuard } from '@modules/auth/guards/authenticated.guard';
@@ -31,7 +31,7 @@ export class ConversationController {
       user,
       createConversationDto
     );
-    this.event.emit('conversation.create', conversation);
+    this.event.emit(ServerEvents.CONVERSATION_CREATED, conversation);
 
     return conversation;
   }
