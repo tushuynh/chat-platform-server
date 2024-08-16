@@ -15,7 +15,7 @@ import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
 import { CreateMessageResponse, DeleteMessageParams } from '@shared/types';
-import { Conversation } from '@common/database/entities';
+import { Conversation, Message } from '@common/database/entities';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 
 const webSocketConfig: GatewayMetadata = {
@@ -183,5 +183,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ? this.sessions.getUserSocket(recipient.id)
         : this.sessions.getUserSocket(creator.id);
     if (recipientSocket) recipientSocket.emit('onMessageDelete', payload);
+  }
+
+  @OnEvent(ServerEvents.MESSAGE_UPDATED)
+  async handleMessageUpdate(message: Message) {
+    const {
+      author,
+      conversation: { creator, recipient },
+    } = message;
+
+    const recipientSocket =
+      author.id === creator.id
+        ? this.sessions.getUserSocket(recipient.id)
+        : this.sessions.getUserSocket(creator.id);
+    if (recipientSocket) recipientSocket.emit('onMessageUpdate', message);
   }
 }
