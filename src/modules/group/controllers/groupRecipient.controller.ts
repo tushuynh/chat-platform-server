@@ -30,7 +30,7 @@ export class GroupRecipientController {
   ) {
     const params = { id, userId, username };
     const response = await this.groupRecipientService.addGroupRecipient(params);
-    this.eventEmitter.emit(ServerEvents.GROUP_RECIPIENT_ADDED, response);
+    this.eventEmitter.emit(ServerEvents.GROUP_USER_ADDED, response);
     return response;
   }
 
@@ -43,7 +43,7 @@ export class GroupRecipientController {
       id: groupId,
       userId: user.id,
     });
-    this.eventEmitter.emit(ServerEvents.GROUP_RECIPIENT_LEFT, {
+    this.eventEmitter.emit(ServerEvents.GROUP_USER_LEFT, {
       group,
       userId: user.id,
     });
@@ -59,7 +59,7 @@ export class GroupRecipientController {
     const params = { userId, groupId, removeUserId };
     const response =
       await this.groupRecipientService.removeGroupRecipient(params);
-    this.eventEmitter.emit(ServerEvents.GROUP_RECIPIENT_REMOVED, response);
+    this.eventEmitter.emit(ServerEvents.GROUP_USER_REMOVED, response);
     return response.group;
   }
 }

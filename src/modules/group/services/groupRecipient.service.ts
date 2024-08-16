@@ -24,7 +24,7 @@ export class GroupRecipientService {
       throw new GroupNotFoundException();
     }
 
-    if (group.owner.id !== params.id) {
+    if (group.owner.id !== params.userId) {
       throw new HttpException(
         'Insufficient permissions',
         HttpStatus.BAD_REQUEST

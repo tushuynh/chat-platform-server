@@ -187,6 +187,11 @@ export type AddGroupRecipientParams = {
   userId: number;
 };
 
+export type AddGroupUserResponse = {
+  group: Group;
+  user: User;
+};
+
 export type RemoveGroupRecipientParams = {
   userId: number;
   groupId: number;

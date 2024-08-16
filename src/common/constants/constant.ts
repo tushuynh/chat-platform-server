@@ -35,9 +35,9 @@ export enum ServerEvents {
   GROUP_MESSAGE_CREATED = 'group.message.created',
   GROUP_MESSAGE_UPDATED = 'group.message.updated',
   GROUP_MESSAGE_DELETED = 'group.message.deleted',
-  GROUP_RECIPIENT_ADDED = 'group.recipient.added',
-  GROUP_RECIPIENT_LEFT = 'group.recipient.left',
-  GROUP_RECIPIENT_REMOVED = 'group.recipient.removed',
+  GROUP_USER_ADDED = 'group.user.added',
+  GROUP_USER_LEFT = 'group.user.left',
+  GROUP_USER_REMOVED = 'group.user.removed',
 }
 
 export enum Services {

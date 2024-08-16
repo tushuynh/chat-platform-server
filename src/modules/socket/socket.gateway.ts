@@ -15,6 +15,7 @@ import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
 import {
+  AddGroupUserResponse,
   CreateGroupMessageResponse,
   CreateMessageResponse,
   DeleteMessageParams,
@@ -226,5 +227,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGroupMessageUpdated(payload: GroupMessage) {
     const room = `group-${payload.group.id}`;
     this.server.to(room).emit('onGroupMessageUpdate', payload);
+  }
+
+  @OnEvent(ServerEvents.GROUP_USER_ADDED)
+  handleGroupUserAdd(payload: AddGroupUserResponse) {
+    const recipientSocket = this.sessions.getUserSocket(payload.user.id);
+    const room = `group-${payload.group.id}`;
+
+    this.server.to(room).emit('onGroupReceivedNewUser', payload);
+    recipientSocket && recipientSocket.emit('onGroupUserAdd', payload);
   }
 }
