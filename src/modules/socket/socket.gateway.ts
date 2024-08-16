@@ -14,8 +14,9 @@ import { SocketSessionService } from './services/socketSession.service';
 import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
-import { CreateMessageResponse } from '@shared/types';
+import { CreateMessageResponse, DeleteMessageParams } from '@shared/types';
 import { Conversation } from '@common/database/entities';
+import { ConversationService } from '@modules/conversation/services/conversation.service';
 
 const webSocketConfig: GatewayMetadata = {
   cors: {
@@ -33,7 +34,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     private readonly sessions: SocketSessionService,
-    private readonly groupService: GroupService
+    private readonly groupService: GroupService,
+    private readonly conversationService: ConversationService
   ) {}
 
   handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
@@ -164,5 +166,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (recipientSocket) {
       recipientSocket.emit('onConversation', payload);
     }
+  }
+
+  @OnEvent(ServerEvents.MESSAGE_DELETED)
+  async handleMessageDelete(payload: DeleteMessageParams) {
+    const conversation = await this.conversationService.findById(
+      payload.conversationId
+    );
+    if (!conversation) {
+      return;
+    }
+
+    const { creator, recipient } = conversation;
+    const recipientSocket =
+      creator.id === payload.userId
+        ? this.sessions.getUserSocket(recipient.id)
+        : this.sessions.getUserSocket(creator.id);
+    if (recipientSocket) recipientSocket.emit('onMessageDelete', payload);
   }
 }
