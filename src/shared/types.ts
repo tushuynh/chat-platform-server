@@ -1,4 +1,5 @@
 import {
+  Conversation,
   GroupMessageAttachment,
   Message,
   MessageAttachment,
@@ -54,6 +55,11 @@ export type CreateMessageParams = {
   content?: string;
   attachments?: Attachment[];
   user: User;
+};
+
+export type CreateMessageResponse = {
+  message: Message;
+  conversation: Conversation;
 };
 
 export type EditMessageParams = {

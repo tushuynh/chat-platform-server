@@ -12,6 +12,9 @@ import { Socket } from 'socket.io';
 import { AuthenticatedSocket } from './interfaces/authenticatedSocket';
 import { SocketSessionService } from './services/socketSession.service';
 import { GroupService } from '@modules/group/services/group.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { ServerEvents } from '@common/constants/constant';
+import { CreateMessageResponse } from '@shared/types';
 
 const webSocketConfig: GatewayMetadata = {
   cors: {
@@ -146,5 +149,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     console.log(`userId ${client.user.id} rooms:`, client.rooms);
     client.to(`conversation-${data.conversationId}`).emit('onTypingStop');
+  }
+
+  @OnEvent(ServerEvents.MESSAGE_CREATED)
+  handleMessageCreatedEvent(payload: CreateMessageResponse) {
+    const conversationId = payload.conversation.id;
+    this.server.to(`conversation-${conversationId}`).emit('onMessage', payload);
   }
 }

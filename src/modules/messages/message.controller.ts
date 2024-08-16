@@ -50,7 +50,7 @@ export class MessageController {
     }
     const params = { user, id, content, attachments };
     const response = await this.messageService.createMessage(params);
-    this.eventEmitter.emit('message.create', response);
+    this.eventEmitter.emit(ServerEvents.MESSAGE_CREATED, response);
     return;
   }
 

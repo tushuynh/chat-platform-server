@@ -27,6 +27,7 @@ export enum ServerEvents {
   FRIEND_REQUEST_REJECTED = 'friendRequest.rejected',
   FRIEND_REMOVED = 'friend.removed',
   CONVERSATION_CREATED = 'conversation.created',
+  MESSAGE_CREATED = 'message.created',
   MESSAGE_UPDATED = 'message.updated',
   MESSAGE_DELETED = 'message.deleted',
   GROUP_CREATED = 'group.created',
