@@ -1,5 +1,7 @@
 import {
   Conversation,
+  Group,
+  GroupMessage,
   GroupMessageAttachment,
   Message,
   MessageAttachment,
@@ -154,6 +156,11 @@ export type CreateGroupMessageParams = {
   attachments: Attachment[];
   content: string;
   groupId: number;
+};
+
+export type CreateGroupMessageResponse = {
+  message: GroupMessage;
+  group: Group;
 };
 
 export type EditGroupMessageParams = {

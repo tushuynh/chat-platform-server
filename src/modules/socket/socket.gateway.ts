@@ -14,7 +14,11 @@ import { SocketSessionService } from './services/socketSession.service';
 import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
-import { CreateMessageResponse, DeleteMessageParams } from '@shared/types';
+import {
+  CreateGroupMessageResponse,
+  CreateMessageResponse,
+  DeleteMessageParams,
+} from '@shared/types';
 import { Conversation, Group, Message } from '@common/database/entities';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 
@@ -205,5 +209,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const socket = this.sessions.getUserSocket(user.id);
       socket && socket.emit('onGroupCreate', payload);
     });
+  }
+
+  @OnEvent(ServerEvents.GROUP_MESSAGE_CREATED)
+  handleGroupMessageCreated(payload: CreateGroupMessageResponse) {
+    const groupId = payload.group.id;
+    this.server.to(`group-${groupId}`).emit('onGroupMessage', payload);
   }
 }
