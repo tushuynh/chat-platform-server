@@ -15,7 +15,7 @@ import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerEvents } from '@common/constants/constant';
 import { CreateMessageResponse, DeleteMessageParams } from '@shared/types';
-import { Conversation, Message } from '@common/database/entities';
+import { Conversation, Group, Message } from '@common/database/entities';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 
 const webSocketConfig: GatewayMetadata = {
@@ -197,5 +197,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ? this.sessions.getUserSocket(recipient.id)
         : this.sessions.getUserSocket(creator.id);
     if (recipientSocket) recipientSocket.emit('onMessageUpdate', message);
+  }
+
+  @OnEvent(ServerEvents.GROUP_CREATED)
+  handleGroupCreated(payload: Group) {
+    payload.users.forEach((user) => {
+      const socket = this.sessions.getUserSocket(user.id);
+      socket && socket.emit('onGroupCreate', payload);
+    });
   }
 }
