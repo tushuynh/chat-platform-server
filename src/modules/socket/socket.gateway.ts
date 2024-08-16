@@ -19,7 +19,12 @@ import {
   CreateMessageResponse,
   DeleteMessageParams,
 } from '@shared/types';
-import { Conversation, Group, Message } from '@common/database/entities';
+import {
+  Conversation,
+  Group,
+  GroupMessage,
+  Message,
+} from '@common/database/entities';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 
 const webSocketConfig: GatewayMetadata = {
@@ -215,5 +220,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleGroupMessageCreated(payload: CreateGroupMessageResponse) {
     const groupId = payload.group.id;
     this.server.to(`group-${groupId}`).emit('onGroupMessage', payload);
+  }
+
+  @OnEvent(ServerEvents.GROUP_MESSAGE_UPDATED)
+  handleGroupMessageUpdated(payload: GroupMessage) {
+    const room = `group-${payload.group.id}`;
+    this.server.to(room).emit('onGroupMessageUpdate', payload);
   }
 }
