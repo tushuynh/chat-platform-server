@@ -41,6 +41,10 @@ export enum ServerEvents {
   GROUP_USER_REMOVED = 'group.user.removed',
 }
 
+export enum WebsocketEvents {
+  FRIEND_REQUEST_ACCEPTED = 'onFriendRequestAccepted',
+}
+
 export enum Services {
   AWS_S3 = 'AWS_S3',
 }

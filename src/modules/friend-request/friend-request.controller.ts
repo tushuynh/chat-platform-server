@@ -46,7 +46,7 @@ export class FriendRequestController {
     @AuthUser() { id: userId }: User,
     @Param('id', ParseIntPipe) id: number
   ) {
-    const response = this.friendRequestService.accept({ id, userId });
+    const response = await this.friendRequestService.accept({ id, userId });
     this.event.emit(ServerEvents.FRIEND_REQUEST_ACCEPTED, response);
     return response;
   }

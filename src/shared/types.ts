@@ -1,5 +1,7 @@
 import {
   Conversation,
+  Friend,
+  FriendRequest,
   Group,
   GroupMessage,
   GroupMessageAttachment,
@@ -24,6 +26,11 @@ export type CancelFriendRequestParams = {
 export type DeleteFriendRequestParams = {
   id: number;
   userId: number;
+};
+
+export type AcceptFriendRequestResponse = {
+  friend: Friend;
+  friendRequest: FriendRequest;
 };
 
 export type UserCredential = {
