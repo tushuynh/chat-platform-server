@@ -22,6 +22,7 @@ export enum Routes {
 }
 
 export enum ServerEvents {
+  FRIEND_REQUEST_CREATED = 'friendRequest.created',
   FRIEND_REQUEST_ACCEPTED = 'friendRequest.accepted',
   FRIEND_REQUEST_CANCELED = 'friendRequest.canceled',
   FRIEND_REQUEST_REJECTED = 'friendRequest.rejected',

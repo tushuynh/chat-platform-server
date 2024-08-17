@@ -1,5 +1,6 @@
 import { AuthModule } from '@modules/auth/auth.module';
 import { ConversationModule } from '@modules/conversation/conversation.module';
+import { EventModule } from '@modules/event/event.module';
 import { ExistModule } from '@modules/exist/exist.module';
 import { FriendRequestModule } from '@modules/friend-request/friend-request.module';
 import { FriendModule } from '@modules/friend/friend.module';
@@ -20,6 +21,7 @@ import { Module } from '@nestjs/common';
     MessageModule,
     ExistModule,
     SocketModule,
+    EventModule,
   ],
   providers: [],
 })

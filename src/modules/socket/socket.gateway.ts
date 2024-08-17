@@ -46,7 +46,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   constructor(
-    private readonly sessions: SocketSessionService,
+    readonly sessions: SocketSessionService,
     private readonly groupService: GroupService,
     private readonly conversationService: ConversationService,
     private readonly friendService: FriendService

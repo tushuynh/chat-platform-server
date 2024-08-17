@@ -36,7 +36,7 @@ export class FriendRequestController {
   ) {
     const params = { user, username };
     const response = await this.friendRequestService.create(params);
-    this.event.emit(ServerEvents.FRIEND_REQUEST_ACCEPTED, response);
+    this.event.emit(ServerEvents.FRIEND_REQUEST_CREATED, response);
     return response;
   }
 
