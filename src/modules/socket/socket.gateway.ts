@@ -29,6 +29,7 @@ import {
   Message,
 } from '@common/database/entities';
 import { ConversationService } from '@modules/conversation/services/conversation.service';
+import { FriendService } from '@modules/friend/services/friend.service';
 
 const webSocketConfig: GatewayMetadata = {
   cors: {
@@ -47,7 +48,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly sessions: SocketSessionService,
     private readonly groupService: GroupService,
-    private readonly conversationService: ConversationService
+    private readonly conversationService: ConversationService,
+    private readonly friendService: FriendService
   ) {}
 
   handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
@@ -297,6 +299,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (leftUserSocket && !socketsInRoom) {
       // User is online but there are no sockets in the room
       return leftUserSocket.emit('onGroupParticipantLeft', payload);
+    }
+  }
+
+  @SubscribeMessage('getOnlineFriends')
+  async handleFriendListRetrieve(
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const { user } = socket;
+    if (user) {
+      const friends = await this.friendService.getFriends(user.id);
+      const onlineFriends = friends.filter((friend) =>
+        this.sessions.getUserSocket(
+          user.id === friend.receiver.id ? friend.sender.id : friend.receiver.id
+        )
+      );
+      socket.emit('getOnlineFriends', onlineFriends);
     }
   }
 }
