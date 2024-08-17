@@ -29,4 +29,11 @@ export class FriendRequestEvent {
     senderSocket &&
       senderSocket.emit(WebsocketEvents.FRIEND_REQUEST_ACCEPTED, payload);
   }
+
+  @OnEvent(ServerEvents.FRIEND_REQUEST_REJECTED)
+  handleFriendRequestRejected(payload: FriendRequest) {
+    const senderSocket = this.sessions.getUserSocket(payload.sender.id);
+    senderSocket &&
+      senderSocket.emit(WebsocketEvents.FRIEND_REQUEST_REJECTED, payload);
+  }
 }
