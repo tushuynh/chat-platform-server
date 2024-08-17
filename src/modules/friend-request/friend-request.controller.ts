@@ -58,7 +58,7 @@ export class FriendRequestController {
     @Param('id', ParseIntPipe) id: number
   ) {
     const response = await this.friendRequestService.cancel({ id, userId });
-    this.event.emit(ServerEvents.FRIEND_REQUEST_CANCELED, response);
+    this.event.emit(ServerEvents.FRIEND_REQUEST_CANCELLED, response);
     return response;
   }
 
