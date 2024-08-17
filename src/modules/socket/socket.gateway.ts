@@ -19,6 +19,7 @@ import {
   CreateGroupMessageResponse,
   CreateMessageResponse,
   DeleteMessageParams,
+  RemoveGroupUserResponse,
 } from '@shared/types';
 import {
   Conversation,
@@ -236,5 +237,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.server.to(room).emit('onGroupReceivedNewUser', payload);
     recipientSocket && recipientSocket.emit('onGroupUserAdd', payload);
+  }
+
+  @OnEvent(ServerEvents.GROUP_USER_REMOVED)
+  handleGroupUserRemoved(payload: RemoveGroupUserResponse) {
+    const { group, user } = payload;
+    const room = `group-${group.id}`;
+
+    const removedUserSocket = this.sessions.getUserSocket(user.id);
+    if (removedUserSocket) {
+      removedUserSocket.emit('onGroupRemoved', payload);
+      removedUserSocket.leave(room);
+    }
+
+    this.server.to(room).emit('onGroupRecipientRemoved', payload);
   }
 }

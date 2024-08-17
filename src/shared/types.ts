@@ -198,6 +198,11 @@ export type RemoveGroupRecipientParams = {
   removeUserId: number;
 };
 
+export type RemoveGroupUserResponse = {
+  group: Group;
+  user: User;
+};
+
 export type LeaveGroupParams = {
   id: number;
   userId: number;
