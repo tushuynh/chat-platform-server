@@ -19,6 +19,7 @@ import {
   CreateGroupMessageResponse,
   CreateMessageResponse,
   DeleteMessageParams,
+  LeaveGroupEventPayload,
   RemoveGroupUserResponse,
 } from '@shared/types';
 import {
@@ -264,6 +265,38 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(roomName).emit('onGroupOwnerUpdate', payload);
     if (newOwnerSocket && !socketsInRoom.has(newOwnerSocket.id)) {
       newOwnerSocket.emit('onGroupOwnerUpdate', payload);
+    }
+  }
+
+  @OnEvent(ServerEvents.GROUP_USER_LEFT)
+  handleGroupUserLeft(payload: LeaveGroupEventPayload) {
+    const roomName = `group-${payload.group.id}`;
+    const { rooms } = this.server.sockets.adapter;
+    const socketsInRoom = rooms.get(roomName);
+    const leftUserSocket = this.sessions.getUserSocket(payload.userId);
+    console.log(`Sockets in the room: `, socketsInRoom);
+    console.log(`Left user socket id: `, leftUserSocket.id);
+
+    /**
+     * If socketsInRoom is undefined, this means that there is
+     * no one connected to the room. So just emit the event for
+     * the connected user if they are online.
+     */
+    if (leftUserSocket && socketsInRoom) {
+      // User is online, at least 1 person is in the room
+      if (socketsInRoom.has(leftUserSocket.id)) {
+        // User is in the room
+        return this.server.to(roomName).emit('onGroupParticipantLeft', payload);
+      } else {
+        // User not in the room
+        leftUserSocket.emit('onGroupParticipantLeft', payload);
+        return this.server.to(roomName).emit('onGroupParticipantLeft', payload);
+      }
+    }
+
+    if (leftUserSocket && !socketsInRoom) {
+      // User is online but there are no sockets in the room
+      return leftUserSocket.emit('onGroupParticipantLeft', payload);
     }
   }
 }

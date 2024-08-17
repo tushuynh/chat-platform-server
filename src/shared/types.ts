@@ -208,6 +208,11 @@ export type LeaveGroupParams = {
   userId: number;
 };
 
+export type LeaveGroupEventPayload = {
+  group: Group;
+  userId: number;
+};
+
 export type CheckUserGroupParams = {
   id: number;
   userId: number;
