@@ -8,7 +8,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { AuthenticatedSocket } from './interfaces/authenticatedSocket';
 import { SocketSessionService } from './services/socketSession.service';
 import { GroupService } from '@modules/group/services/group.service';
@@ -41,7 +41,7 @@ const webSocketConfig: GatewayMetadata = {
 @WebSocketGateway(webSocketConfig)
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Socket;
+  server: Server;
 
   constructor(
     private readonly sessions: SocketSessionService,
@@ -251,5 +251,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     this.server.to(room).emit('onGroupRecipientRemoved', payload);
+  }
+
+  @OnEvent(ServerEvents.GROUP_OWNER_UPDATED)
+  handleGroupOwnerUpdate(payload: Group) {
+    const roomName = `group-${payload.id}`;
+    const newOwnerSocket = this.sessions.getUserSocket(payload.owner.id);
+
+    const { rooms } = this.server.sockets.adapter;
+    const socketsInRoom = rooms.get(roomName);
+
+    this.server.to(roomName).emit('onGroupOwnerUpdate', payload);
+    if (newOwnerSocket && !socketsInRoom.has(newOwnerSocket.id)) {
+      newOwnerSocket.emit('onGroupOwnerUpdate', payload);
+    }
   }
 }
