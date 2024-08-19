@@ -13,9 +13,11 @@ import { AuthenticatedSocket } from './interfaces/authenticatedSocket';
 import { SocketSessionService } from './services/socketSession.service';
 import { GroupService } from '@modules/group/services/group.service';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ServerEvents } from '@common/constants/constant';
+import { ServerEvents, WebsocketEvents } from '@common/constants/constant';
 import {
   AddGroupUserResponse,
+  CallAcceptedPayload,
+  CreateCallPayload,
   CreateGroupMessageResponse,
   CreateMessageResponse,
   DeleteMessageParams,
@@ -316,5 +318,44 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       socket.emit('getOnlineFriends', onlineFriends);
     }
+  }
+
+  @SubscribeMessage(WebsocketEvents.VIDEO_CALL_INITIATE)
+  async handleVideoCallInitiate(
+    @MessageBody() data: CreateCallPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const caller = socket.user;
+    const receiverSocket = this.sessions.getUserSocket(data.recipientId);
+    if (!receiverSocket) {
+      return socket.emit('onUserUnavailable');
+    }
+
+    receiverSocket.emit('onVideoCall', { ...data, caller });
+  }
+
+  @SubscribeMessage(WebsocketEvents.VIDEO_CALL_ACCEPTED)
+  async handleVideoCallAccepted(
+    @MessageBody() data: CallAcceptedPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const callerSocket = this.sessions.getUserSocket(data.caller.id);
+    if (!callerSocket) {
+      console.log('Caller is offline');
+      return;
+    }
+
+    const conversation = await this.conversationService.isCreated(
+      data.caller.id,
+      socket.user.id
+    );
+    if (!conversation) {
+      console.log('Conversation not found');
+      return;
+    }
+
+    const payload = { ...data, conversation, acceptor: socket.user };
+    callerSocket.emit('onVideoCallAccept', payload);
+    socket.emit('onVideoCallAccept', payload);
   }
 }

@@ -44,6 +44,8 @@ export enum ServerEvents {
 export enum WebsocketEvents {
   FRIEND_REQUEST_ACCEPTED = 'onFriendRequestAccepted',
   FRIEND_REQUEST_REJECTED = 'onFriendRequestRejected',
+  VIDEO_CALL_INITIATE = 'onVideoCallInitiate',
+  VIDEO_CALL_ACCEPTED = 'videoCallAccepted',
 }
 
 export enum Services {

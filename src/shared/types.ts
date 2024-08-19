@@ -229,3 +229,12 @@ export type CheckUserGroupParams = {
   id: number;
   userId: number;
 };
+
+export type CreateCallPayload = {
+  recipientId: number;
+  conversationId: number;
+};
+
+export type CallAcceptedPayload = {
+  caller: User;
+};
