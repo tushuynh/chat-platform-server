@@ -57,6 +57,11 @@ export type CreateFriendParams = {
   username: string;
 };
 
+export type RemoveFriendEventPayload = {
+  userId: number;
+  friend: Friend;
+};
+
 export interface Attachment extends Express.Multer.File {}
 
 export type CreateMessageParams = {
