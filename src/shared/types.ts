@@ -238,3 +238,7 @@ export type CreateCallPayload = {
 export type CallAcceptedPayload = {
   caller: User;
 };
+
+export type CallRejectedPayload = {
+  caller: User;
+};

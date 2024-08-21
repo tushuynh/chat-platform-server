@@ -17,6 +17,7 @@ import { ServerEvents, WebsocketEvents } from '@common/constants/constant';
 import {
   AddGroupUserResponse,
   CallAcceptedPayload,
+  CallRejectedPayload,
   CreateCallPayload,
   CreateGroupMessageResponse,
   CreateMessageResponse,
@@ -357,5 +358,18 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const payload = { ...data, conversation, acceptor: socket.user };
     callerSocket.emit('onVideoCallAccept', payload);
     socket.emit('onVideoCallAccept', payload);
+  }
+
+  @SubscribeMessage(WebsocketEvents.VIDEO_CALL_REJECTED)
+  async handleVideoCallRejected(
+    @MessageBody() data: CallRejectedPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const receiver = socket.user;
+    const callerSocket = this.sessions.getUserSocket(data.caller.id);
+
+    callerSocket &&
+      callerSocket.emit(WebsocketEvents.VIDEO_CALL_REJECTED, { receiver });
+    socket.emit(WebsocketEvents.VIDEO_CALL_REJECTED, { receiver });
   }
 }
