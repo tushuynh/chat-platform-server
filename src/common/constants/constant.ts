@@ -47,6 +47,7 @@ export enum WebsocketEvents {
   VIDEO_CALL_INITIATE = 'onVideoCallInitiate',
   VIDEO_CALL_ACCEPTED = 'onVideoCallAccepted',
   VIDEO_CALL_REJECTED = 'onVideoCallRejected',
+  VIDEO_CALL_HANG_UP = 'onVideoCallHangUp',
 }
 
 export enum Services {

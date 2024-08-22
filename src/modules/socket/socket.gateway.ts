@@ -17,6 +17,7 @@ import { ServerEvents, WebsocketEvents } from '@common/constants/constant';
 import {
   AddGroupUserResponse,
   CallAcceptedPayload,
+  CallHangUpPayload,
   CallRejectedPayload,
   CreateCallPayload,
   CreateGroupMessageResponse,
@@ -371,5 +372,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     callerSocket &&
       callerSocket.emit(WebsocketEvents.VIDEO_CALL_REJECTED, { receiver });
     socket.emit(WebsocketEvents.VIDEO_CALL_REJECTED, { receiver });
+  }
+
+  @SubscribeMessage(WebsocketEvents.VIDEO_CALL_HANG_UP)
+  async handleVideoCallHangUp(
+    @MessageBody() { caller, receiver }: CallHangUpPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const receiverSocket =
+      socket.user.id === caller.id
+        ? this.sessions.getUserSocket(receiver.id)
+        : this.sessions.getUserSocket(caller.id);
+
+    socket.emit(WebsocketEvents.VIDEO_CALL_HANG_UP);
+    receiverSocket && receiverSocket.emit(WebsocketEvents.VIDEO_CALL_HANG_UP);
   }
 }

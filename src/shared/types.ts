@@ -242,3 +242,8 @@ export type CallAcceptedPayload = {
 export type CallRejectedPayload = {
   caller: User;
 };
+
+export type CallHangUpPayload = {
+  caller: User;
+  receiver: User;
+};
