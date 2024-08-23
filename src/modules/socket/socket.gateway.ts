@@ -400,7 +400,31 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return socket.emit('onUserUnavailable');
     }
 
-    console.log('emitting voice call...');
     receiverSocket.emit('onVoiceCall', { ...payload, caller });
+  }
+
+  @SubscribeMessage(WebsocketEvents.VOICE_CALL_ACCEPTED)
+  async handleVoiceCallAccepted(
+    @MessageBody() payload: CallAcceptedPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const callerSocket = this.sessions.getUserSocket(payload.caller.id);
+    if (!callerSocket) {
+      console.log('Caller is offline');
+      return;
+    }
+
+    const conversation = await this.conversationService.isCreated(
+      payload.caller.id,
+      socket.user.id
+    );
+    if (!conversation) {
+      console.log('No conversation found');
+      return;
+    }
+
+    const callPayload = { ...payload, conversation, acceptor: socket.user };
+    callerSocket.emit(WebsocketEvents.VOICE_CALL_ACCEPTED, callPayload);
+    socket.emit(WebsocketEvents.VOICE_CALL_ACCEPTED, callPayload);
   }
 }
