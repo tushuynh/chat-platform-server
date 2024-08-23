@@ -428,6 +428,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     socket.emit(WebsocketEvents.VOICE_CALL_ACCEPTED, callPayload);
   }
 
+  @SubscribeMessage(WebsocketEvents.VOICE_CALL_REJECTED)
+  async handleVoiceCallRejected(
+    @MessageBody() data: CallRejectedPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const receiver = socket.user;
+    const callerSocket = this.sessions.getUserSocket(data.caller.id);
+
+    callerSocket &&
+      callerSocket.emit(WebsocketEvents.VOICE_CALL_REJECTED, { receiver });
+    socket.emit(WebsocketEvents.VOICE_CALL_REJECTED, { receiver });
+  }
+
   @SubscribeMessage(WebsocketEvents.VOICE_CALL_HANG_UP)
   async handleVoiceCallHangUp(
     @MessageBody() { caller, receiver }: CallHangUpPayload,

@@ -50,6 +50,7 @@ export enum WebsocketEvents {
   VIDEO_CALL_HANG_UP = 'onVideoCallHangUp',
   VOICE_CALL_INITIATE = 'onVoiceCallInitiate',
   VOICE_CALL_ACCEPTED = 'onVoiceCallAccepted',
+  VOICE_CALL_REJECTED = 'onVoiceCallRejected',
   VOICE_CALL_HANG_UP = 'onVoiceCallHangUp',
 }
 
