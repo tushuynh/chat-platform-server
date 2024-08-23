@@ -427,4 +427,18 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     callerSocket.emit(WebsocketEvents.VOICE_CALL_ACCEPTED, callPayload);
     socket.emit(WebsocketEvents.VOICE_CALL_ACCEPTED, callPayload);
   }
+
+  @SubscribeMessage(WebsocketEvents.VOICE_CALL_HANG_UP)
+  async handleVoiceCallHangUp(
+    @MessageBody() { caller, receiver }: CallHangUpPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const receiverSocket =
+      socket.user.id === caller.id
+        ? this.sessions.getUserSocket(receiver.id)
+        : this.sessions.getUserSocket(caller.id);
+
+    socket.emit(WebsocketEvents.VOICE_CALL_HANG_UP);
+    receiverSocket && receiverSocket.emit(WebsocketEvents.VOICE_CALL_HANG_UP);
+  }
 }
