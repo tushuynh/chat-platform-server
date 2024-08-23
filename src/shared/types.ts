@@ -247,3 +247,8 @@ export type CallHangUpPayload = {
   caller: User;
   receiver: User;
 };
+
+export type VoiceCallPayload = {
+  conversationId: number;
+  recipientId: number;
+};

@@ -25,6 +25,7 @@ import {
   DeleteMessageParams,
   LeaveGroupEventPayload,
   RemoveGroupUserResponse,
+  VoiceCallPayload,
 } from '@shared/types';
 import {
   Conversation,
@@ -386,5 +387,20 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     socket.emit(WebsocketEvents.VIDEO_CALL_HANG_UP);
     receiverSocket && receiverSocket.emit(WebsocketEvents.VIDEO_CALL_HANG_UP);
+  }
+
+  @SubscribeMessage(WebsocketEvents.VOICE_CALL_INITIATE)
+  async handleVoiceCallInitiate(
+    @MessageBody() payload: VoiceCallPayload,
+    @ConnectedSocket() socket: AuthenticatedSocket
+  ) {
+    const caller = socket.user;
+    const receiverSocket = this.sessions.getUserSocket(payload.recipientId);
+    if (!receiverSocket) {
+      return socket.emit('onUserUnavailable');
+    }
+
+    console.log('emitting voice call...');
+    receiverSocket.emit('onVoiceCall', { ...payload, caller });
   }
 }
