@@ -216,6 +216,32 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
+  @SubscribeMessage('onGroupTypingStart')
+  onGroupTypingStart(
+    @MessageBody() data: { groupId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} start typing in groupId: ${data.groupId}`
+    );
+
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+    client.to(`group-${data.groupId}`).emit('onGroupTypingStart', client.user);
+  }
+
+  @SubscribeMessage('onGroupTypingStop')
+  onGroupTypingStop(
+    @MessageBody() data: { groupId: string },
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    console.log(
+      `userId ${client.user.id} stop typing in groupId: ${data.groupId}`
+    );
+
+    console.log(`userId ${client.user.id} rooms:`, client.rooms);
+    client.to(`group-${data.groupId}`).emit('onGroupTypingStop', client.user);
+  }
+
   @OnEvent(ServerEvents.GROUP_MESSAGE_CREATED)
   handleGroupMessageCreated(payload: CreateGroupMessageResponse) {
     const groupId = payload.group.id;
