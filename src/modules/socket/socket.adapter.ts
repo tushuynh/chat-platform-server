@@ -7,6 +7,7 @@ import * as cookie from 'cookie';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
+import { ServerOptions } from 'socket.io';
 
 export class SocketAdapter extends IoAdapter {
   private sessionRepository: Repository<Session>;
@@ -18,8 +19,23 @@ export class SocketAdapter extends IoAdapter {
     this.configService = app.get(ConfigService);
   }
 
-  createIOServer(port: number, options?: any) {
-    const server = super.createIOServer(port, options);
+  createIOServer(
+    port: number,
+    options?: ServerOptions & {
+      namespace?: string;
+      server?: any;
+    }
+  ) {
+    const allowOrigin = this.configService.get<string>('auth.cors.allowOrigin');
+    const server = super.createIOServer(port, {
+      ...options,
+      cors: {
+        origin: allowOrigin,
+        credentials: true,
+      },
+      pingInterval: 10000,
+      pingTimeout: 15000,
+    });
 
     server.use(async (socket: AuthenticatedSocket, next) => {
       const { cookie: clientCookie } = socket.handshake.headers;

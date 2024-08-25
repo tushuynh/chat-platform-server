@@ -1,6 +1,5 @@
 import {
   ConnectedSocket,
-  GatewayMetadata,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -36,16 +35,7 @@ import {
 import { ConversationService } from '@modules/conversation/services/conversation.service';
 import { FriendService } from '@modules/friend/services/friend.service';
 
-const webSocketConfig: GatewayMetadata = {
-  cors: {
-    origin: [process.env.ALLOW_ORIGIN],
-    credentials: true,
-  },
-  pingInterval: 10000,
-  pingTimeout: 15000,
-};
-
-@WebSocketGateway(webSocketConfig)
+@WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
