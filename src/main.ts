@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { TypeormStore } from 'connect-typeorm';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { ExpressPeerServer } from 'peer';
 import { DataSource } from 'typeorm';
 import { AppModule } from './app.module';
 import { SocketAdapter } from '@modules/socket/socket.adapter';
@@ -42,6 +43,10 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+
+  const server = app.getHttpServer();
+  const peerServer = ExpressPeerServer(server);
+  app.use('/peerjs', peerServer);
 
   await app.listen(port);
   logger.log(`Server running on http://localhost:${port}${globalPrefix}`);
